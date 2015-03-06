@@ -1,15 +1,15 @@
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 
-configurations.all {
-  resolutionStrategy {
-    eachDependency { DependencyResolveDetails details ->
-      if (details.requested.group == 'org.springframework') {
-        details.useVersion '4.2.0.BUILD-SNAPSHOT'
-      }
-    }
-  }
-}
+//configurations.all {
+//  resolutionStrategy {
+//    eachDependency { DependencyResolveDetails details ->
+//      if (details.requested.group == 'org.springframework') {
+//        details.useVersion '4.2.0.BUILD-SNAPSHOT'
+//      }
+//    }
+//  }
+//}
 
 buildscript {
     ext {
@@ -17,6 +17,8 @@ buildscript {
     }
     repositories {
         mavenCentral()
+        maven { url "https://repo.spring.io/libs-snapshot" }
+        maven { url "https://repo.spring.io/libs-snapshot" }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")

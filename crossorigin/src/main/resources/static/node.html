@@ -23,8 +23,8 @@
             document.getElementById('output').appendChild(elem);
         }
     </script>
-    <script src="./sockjs.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
 
 </head>
 <body>
@@ -44,14 +44,19 @@
         <option value="xdr-polling">xdr-polling</option>
     </select>
 </div>
-<p id="output"></p>
+
+<div id="first" class="box">
+    <form><input autocomplete="off" value=""></input></form>
+    <div id="output"></div>
+</div>
 
 <script type="text/javascript">
-    var url = 'http://' + document.domain + ':7070/stomp';
-    //var url = 'http://10.0.2.2:7070/stomp';
+    var div  = $('#output');
+    var inp  = $('#first input');
+    var form = $('#first form');
+
+    var url = 'http://' + document.domain + ':9999/echo';
     var connected = false;
-    var socket;
-    var stompClient;
 
     if (!window.console) {
         console = {
@@ -61,29 +66,43 @@
         };
     }
 
-    addEvent("change", document.getElementById('protocol'), function() {
-        document.getElementById('output').innerHTML = '';
+    var print = function(m, p) {
+        p = (p === undefined) ? '' : JSON.stringify(p);
+        div.append($("<code>").text(m + ' ' + p));
+        div.append($("<br>"));
+        div.scrollTop(div.scrollTop()+10000);
+    };
+
+    $('#protocol').change(function() {
+
+        div.empty();
         if(connected == true) {
             stompClient.disconnect();
         }
-        var protocol = document.getElementById('protocol').value;
+        var protocol = $('#protocol').val();
         var options = {debug: true};
         if(protocol != 'auto') {
             options = {debug: true, protocols_whitelist: [protocol]}
         }
-        socket = new SockJS(url, null, options);
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function(frame) {
-            connected = true;
-            print('Connected: ' + frame);
-            stompClient.subscribe('/topic/push', function(message) {
-                print('Message received: ' + message.body);
-            });
-        }, function(error) {
-            print('STOMP protocol error: ' + error);
+        var sockjs = new SockJS(url, null, options);
+        $('#first input').focus();
+
+        sockjs.onopen    = function()  {print('[*] open', sockjs.protocol);};
+        sockjs.onmessage = function(e) {print('[.] message', e.data);};
+        sockjs.onclose   = function()  {print('[*] close');};
+
+
+
+
+        form.unbind();
+        form.submit(function() {
+            var v = inp.val();
+            print('[ ] sending', v);
+            sockjs.send(inp.val());
+            inp.val('');
+            return false;
         });
     });
 </script>
 
 </body>
-

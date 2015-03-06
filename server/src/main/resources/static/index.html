@@ -23,11 +23,12 @@
         }
     </script>
     <script src="http://cdn.sockjs.org/sockjs-0.3.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.2.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
 
 </head>
 <body>
-    <h1>SockJS same-origin</h1>
+    <h1>SockJS same-origin 2</h1>
 
     <div>
         <select id="protocol" size="10">
@@ -71,7 +72,11 @@
             }
             socket = new SockJS(url, null, options);
             stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
+            $.getJSON('./csrf', function(data) {
+                var headers = {};
+                headers[data.headerName] = data.token;
+
+                stompClient.connect(headers, function(frame) {
                 connected = true;
                 print('Connected: ' + frame);
                 stompClient.subscribe('/topic/push', function(message) {
@@ -79,6 +84,7 @@
                 });
             }, function(error) {
                 print('STOMP protocol error: ' + error);
+            });
             });
         });
     </script>
