@@ -12,7 +12,6 @@ configurations.all {
 }
 
 repositories {
-  mavenLocal()
   mavenCentral()
   maven {
     url "http://repo.spring.io/snapshot/"
@@ -27,7 +26,6 @@ buildscript {
         springBootVersion = '1.2.1.RELEASE'
     }
     repositories {
-        mavenLocal()
         mavenCentral()
         maven {
           url "http://repo.spring.io/snapshot/"
