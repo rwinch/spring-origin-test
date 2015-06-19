@@ -1,1 +1,1 @@
-include ":crossorigin", ":server"
+include ":crossorigin", ":server", ":webcors"
