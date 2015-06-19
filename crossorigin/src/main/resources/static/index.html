@@ -116,6 +116,7 @@
 
         addEvent("click", document.getElementById('get-request'), function() {
             var req = new XMLHttpRequest();
+            req.withCredentials = true;
             req.open('GET', 'http://' + document.domain + ':7070/hello', false);
             req.send(null);
             if(req.status == 200)
@@ -123,8 +124,17 @@
         });
 
         addEvent("click", document.getElementById('put-request'), function() {
+            var token;
+            var csrf = new XMLHttpRequest();
+            csrf.withCredentials = true;
+            csrf.open('GET', 'http://' + document.domain + ':7070/csrf', false);
+            csrf.send(null);
+            if(csrf.status == 200)
+                token = JSON.parse(csrf.responseText)
             var req = new XMLHttpRequest();
+            req.withCredentials = true;
             req.open('PUT', 'http://' + document.domain + ':7070/hello', false);
+            req.setRequestHeader(token.headerName,token.token);
             req.send("This is a test!");
             if(req.status == 200)
                 print('Response received: ' + req.responseText);
