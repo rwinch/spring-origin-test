@@ -16,8 +16,10 @@
 //
 package server;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -35,4 +37,19 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	//			.exposedHeaders("header1", "header2").allowCredentials(false).maxAge(3600);
 	//}
 
+    /**
+     * Yes this is not on by default, but many applications will have
+     * dispatchOptionsRequest enabled if they are doing CORS now. Furthermore,
+     * this is a very easy copy paste error with huge implications if the recomendation is
+     * to disable security for all OPTIONS requests.
+     *
+     * @param context
+     * @return
+     */
+    @Bean
+    public DispatcherServlet dispatcherServlet(WebApplicationContext context) {
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(context);
+        dispatcherServlet.setDispatchOptionsRequest(true);
+        return dispatcherServlet;
+    }
 }
